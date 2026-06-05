@@ -15,7 +15,7 @@ import (
 
 func main() {
 	// 1) Init database
-	db := helpers.GetDB()
+	db := helpers.NewDBFromEnv()
 
 	db.AddQueryHook(bundebug.NewQueryHook(
 		bundebug.WithEnabled(false),

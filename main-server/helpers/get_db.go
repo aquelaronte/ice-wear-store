@@ -10,12 +10,28 @@ import (
 	"github.com/uptrace/bun/driver/pgdriver"
 )
 
+var db *bun.DB
+
+// InitDB sets the global DB instance. Call once at startup (or from tests
+// with a testcontainer-backed instance built via GetDBFromDSN).
+func InitDB(instance *bun.DB) {
+	db = instance
+}
+
+// GetDB returns the global DB instance set by InitDB.
 func GetDB() *bun.DB {
+	if db == nil {
+		panic("helpers.GetDB: db not initialized — call helpers.InitDB first")
+	}
+	return db
+}
+
+// NewDBFromEnv builds a *bun.DB from config.Envs. Typically passed to InitDB
+// in main; tests should build their own via GetDBFromDSN instead.
+func NewDBFromEnv() *bun.DB {
 	password := config.Envs.DB.Password
 
 	var dsn string
-
-	// If password is not set, omit it from the DSN
 	if password == nil {
 		dsn = fmt.Sprintf(
 			"postgres://%s@%s:%s/%s?sslmode=disable",
@@ -39,10 +55,6 @@ func GetDB() *bun.DB {
 }
 
 func GetDBFromDSN(dsn string) *bun.DB {
-	// Open a sql.DB connection using the pgdriver with the DSN
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
-
-	db := bun.NewDB(sqldb, pgdialect.New())
-
-	return db
+	return bun.NewDB(sqldb, pgdialect.New())
 }
