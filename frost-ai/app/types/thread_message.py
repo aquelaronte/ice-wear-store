@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 
 
@@ -6,8 +7,8 @@ class ThreadMessageRole(Enum):
     AI = "AI"
 
 
+@dataclass
 class ThreadMessage:
-    id: str
     role: ThreadMessageRole
     content: str
-    conversation_id: str
+    thread_id: str
