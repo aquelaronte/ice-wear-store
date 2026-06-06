@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 from app import config
 from app.prompts.prompt_generator import PromptGenerator
@@ -6,18 +6,14 @@ from app.types.llm import LlmMessage, LlmMessageRole
 from app.types.thread_message import ThreadMessage, ThreadMessageRole
 
 
-@dataclass
-class AnswerCommand:
+class AnswerCommand(BaseModel):
     message: str
-    thread_id: str | None = (
-        None  # if no thread_id is passed, then a new one will be created there
-    )
+    thread_id: str | None = None
 
 
-@dataclass
-class AnswerResult:
+class AnswerResult(BaseModel):
     answer: str
-    new_thread_id: str | None = None  # created thread
+    new_thread_id: str | None = None
 
 
 async def answer(command: AnswerCommand) -> AnswerResult:
@@ -30,9 +26,11 @@ async def answer(command: AnswerCommand) -> AnswerResult:
     message_history = []
 
     if thread_id is not None:
-        message_history = thread_repo.get_thread_messages(thread_id=thread_id, limit=5)
+        message_history = await thread_repo.get_thread_messages(
+            thread_id=thread_id, limit=5
+        )
     else:
-        thread_id = thread_repo.new_thread()
+        thread_id = await thread_repo.new_thread()
 
     # Retrieve recommendations
     recommendations = recommendation_repo.recommend(question=command.message)
@@ -56,7 +54,7 @@ async def answer(command: AnswerCommand) -> AnswerResult:
 
     # Save messages in thread so they can be retrieved by the LLM
     # in the next interaction
-    thread_repo.save_messages(
+    await thread_repo.save_messages(
         [
             ThreadMessage(
                 role=ThreadMessageRole.USER,
