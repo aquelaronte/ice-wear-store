@@ -12,8 +12,15 @@ class ShopifyStoreSpider(scrapy.Spider):
     description_selector = ".product-info__block-item .prose p::text"
     discard_first_picture_in_gallery = False
 
+    def __init__(self, limit: str | int | None = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.limit = int(limit) if limit is not None else None
+
     def parse(self, response: Response):
-        for product in response.css("product-card")[:1]:
+        products = response.css("product-card")
+        if self.limit is not None:
+            products = products[: self.limit]
+        for product in products:
             raw_img = product.css(".product-card__figure img::attr(src)").get()
             href = product.css("product-card a.product-title::attr(href)").get()
 
