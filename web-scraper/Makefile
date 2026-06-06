@@ -1,4 +1,4 @@
-.PHONY: crawl-clemont
+.PHONY: crawl-clemont crawl-undergold
 
 crawl-clemont:
 	uv run scrapy crawl clemont -O -:jsonlines
