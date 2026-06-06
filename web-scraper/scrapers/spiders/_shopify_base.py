@@ -9,7 +9,7 @@ class ShopifyStoreSpider(scrapy.Spider):
     def parse(self, response: Response):
         hrefs = response.css("product-card a.product-title::attr(href)").getall()
 
-        yield from response.follow_all(urls=hrefs[:3], callback=self.lookup_product)
+        yield from response.follow_all(urls=hrefs, callback=self.lookup_product)
 
     def lookup_product(self, response: Response):
         name = response.css(".product-info__block-item h1.product-title::text").get()
