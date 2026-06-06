@@ -26,3 +26,22 @@ func GetAllItems(ctx context.Context, input *types.GetAllItemsInput) (*types.Get
 	out.Body.Count = count
 	return out, nil
 }
+
+func GetItemById(ctx context.Context, input *types.GetItemByIdInput) (*types.GetItemByIdOutput, error) {
+	db := helpers.GetDB()
+
+	item := new(entities.Item)
+
+	err := db.NewSelect().
+		Model(item).
+		Where("id = ?", input.ID).
+		Scan(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	out := &types.GetItemByIdOutput{}
+	out.Body.Item = item
+	return out, nil
+}

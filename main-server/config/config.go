@@ -2,13 +2,15 @@ package config
 
 import (
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Port string
-	DB   struct {
+	Port        string
+	CORSOrigins []string
+	DB          struct {
 		Host     string
 		Port     string
 		Name     string
@@ -23,7 +25,8 @@ func initConfig() Config {
 	godotenv.Load()
 
 	return Config{
-		Port: getEnv("PORT", "8000"),
+		Port:        getEnv("PORT", "8000"),
+		CORSOrigins: splitAndTrim(getEnv("CORS_ORIGINS", "*")),
 		DB: struct {
 			Host     string
 			Port     string
@@ -46,6 +49,17 @@ func getEnv(key, fallback string) string {
 	}
 
 	return fallback
+}
+
+func splitAndTrim(value string) []string {
+	parts := strings.Split(value, ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if trimmed := strings.TrimSpace(p); trimmed != "" {
+			out = append(out, trimmed)
+		}
+	}
+	return out
 }
 
 func getEnvWithoutFallback(key string) *string {
