@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"sync"
 
 	"arias.systems.ice-wear-store/main-server/helpers"
@@ -28,6 +30,9 @@ type scrapedItem struct {
 // scrapers yields the items via stdout, so this function
 // will scan stdout and insert each entry to the database
 func main() {
+	limit := flag.Int("limit", 0, "max number of products to scrape per spider (0 = no limit)")
+	flag.Parse()
+
 	spiders := []string{"clemont", "undergold"}
 
 	helpers.InitDB(helpers.NewDBFromEnv())
@@ -51,7 +56,7 @@ func main() {
 			defer wg.Done()
 
 			// run scraping and inserting process
-			n, err := populate(ctx, db, spider)
+			n, err := populate(ctx, db, spider, *limit)
 
 			if err != nil {
 				log.Printf("[%s] failed: %v", spider, err)
@@ -64,7 +69,7 @@ func main() {
 }
 
 // runs a spider and begins to insert items in database
-func populate(ctx context.Context, db *bun.DB, spider string) (int, error) {
+func populate(ctx context.Context, db *bun.DB, spider string, limit int) (int, error) {
 	// -O = override output config
 	// - = stdout
 	// :jsonlines = format
@@ -72,7 +77,13 @@ func populate(ctx context.Context, db *bun.DB, spider string) (int, error) {
 	// jsonlines: each line is a complete json
 	// json: a well formatted json with indentation and new lines
 	// csv: data in csv format
-	cmd := exec.Command("uv", "run", "scrapy", "crawl", spider, "-O", "-:jsonlines")
+	args := []string{"run", "scrapy", "crawl", spider, "-O", "-:jsonlines"}
+
+	// If limit is passed, then append it to the arguments
+	if limit > 0 {
+		args = append(args, "-a", "limit="+strconv.Itoa(limit))
+	}
+	cmd := exec.Command("uv", args...)
 
 	// WARNING: this route is always relative from where we are running this script
 	// ../web-scraper works if we run this script via `make populate` or `go run ./cmd/populate/main.go`
