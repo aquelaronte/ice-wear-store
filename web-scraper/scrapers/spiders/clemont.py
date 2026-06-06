@@ -7,3 +7,4 @@ class ClemontSpider(ShopifyStoreSpider):
     start_urls = [
         "https://clemont.co/collections/all",
     ]
+    discard_first_picture_in_gallery = True
