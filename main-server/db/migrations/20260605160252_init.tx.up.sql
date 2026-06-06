@@ -6,8 +6,8 @@ CREATE TYPE source AS ENUM ('clemont', 'undergold', 'own');
 
 CREATE TABLE item (
     id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description VARCHAR(255),
+    name TEXT NOT NULL,
+    description TEXT,
     price BIGINT NOT NULL,
     source source NOT NULL DEFAULT 'own',
     pictures TEXT[],
@@ -20,7 +20,7 @@ CREATE TABLE item (
 
 CREATE TABLE item_variant (
     id UUID,
-    name VARCHAR(255) NOT NULL,
+    name TEXT NOT NULL,
 
     item_id UUID NOT NULL REFERENCES item(id) ON DELETE CASCADE, -- reference to item
 

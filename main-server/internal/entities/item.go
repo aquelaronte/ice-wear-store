@@ -7,6 +7,14 @@ import (
 	"github.com/uptrace/bun"
 )
 
+type Source string
+
+const (
+	SourceClemont   Source = "clemont"
+	SourceUndergold Source = "undergold"
+	SourceOwn       Source = "own"
+)
+
 type Item struct {
 	bun.BaseModel `bun:"table:item" json:"-"`
 
@@ -14,6 +22,7 @@ type Item struct {
 	Name        string    `bun:"name,notnull" json:"name"`
 	Description *string   `bun:"description" json:"description,omitempty"`
 	Price       int       `bun:"price,notnull" json:"price"`
+	Source      Source    `bun:"source,notnull,type:source" json:"source"`
 	Pictures    []string  `bun:"pictures,type:text[]" json:"pictures"`
 
 	DeletedAt *time.Time `bun:"deleted_at,soft_delete" json:"deleted_at,omitempty"`
