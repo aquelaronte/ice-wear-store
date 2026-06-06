@@ -1,18 +1,18 @@
 export type VariantGroup = {
-  name: string
-  options: string[]
-}
+  name: string;
+  options: string[];
+};
 
 export type Product = {
-  slug: string
-  name: string
-  price: number
-  category: string
-  description: string
-  details: string[]
-  images: string[]
-  variants: VariantGroup[]
-}
+  slug: string;
+  name: string;
+  price: number;
+  category: string;
+  description: string;
+  details: string[];
+  images: string[];
+  variants: VariantGroup[];
+};
 
 export const products: Product[] = [
   {
@@ -67,7 +67,9 @@ export const products: Product[] = [
       "One size, true stretch fit",
     ],
     images: ["/products/arctic-beanie-1.png", "/products/arctic-beanie-2.png"],
-    variants: [{ name: "Color", options: ["Ice Blue", "Snow White", "Charcoal"] }],
+    variants: [
+      { name: "Color", options: ["Ice Blue", "Snow White", "Charcoal"] },
+    ],
   },
   {
     slug: "tundra-puffer-vest",
@@ -101,7 +103,10 @@ export const products: Product[] = [
       "Hand-finished fringe",
       "Brushed soft face",
     ],
-    images: ["/products/snowfall-scarf-1.png", "/products/snowfall-scarf-2.png"],
+    images: [
+      "/products/snowfall-scarf-1.png",
+      "/products/snowfall-scarf-2.png",
+    ],
     variants: [{ name: "Color", options: ["Frost Grey", "Ice Blue", "Cream"] }],
   },
   {
@@ -123,12 +128,14 @@ export const products: Product[] = [
       { name: "Color", options: ["Ice Blue", "Black"] },
     ],
   },
-]
+];
 
 export function getProduct(slug: string) {
-  return products.find((p) => p.slug === slug)
+  return products.find((p) => p.slug === slug);
 }
 
+const priceFormatter = Intl.NumberFormat("es-CO");
+
 export function formatPrice(price: number) {
-  return `$${price.toFixed(0)}`
+  return `$1${priceFormatter.format(price / 100)}`;
 }

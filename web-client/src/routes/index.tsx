@@ -1,14 +1,15 @@
 import { ProductCard } from "@/components/product-card";
-import { products } from "@/lib/format-price";
+import { ProductCardSkeleton } from "@/components/product-card-skeleton";
 import { createFileRoute } from "@tanstack/react-router";
 import heroIceUrl from "@/assets/hero-ice.png";
+import { $api } from "@/api/client";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const outerwear = products.filter((p) => p.category === "Outerwear");
+  const { data, isLoading } = $api.useQuery("get", "/products");
 
   return (
     <main className="min-h-screen">
@@ -52,13 +53,17 @@ function RouteComponent() {
             <p className="mt-1 text-muted-foreground">Shirts, shoes, pants</p>
           </div>
           <span className="text-sm text-muted-foreground">
-            {outerwear.length} pieces
+            {isLoading ? "Loading…" : `${data?.count ?? 0} pieces`}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-3">
-          {outerwear.map((product) => (
-            <ProductCard key={product.slug} product={product} />
-          ))}
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))
+            : data?.items?.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
         </div>
       </section>
 
