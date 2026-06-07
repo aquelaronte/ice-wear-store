@@ -5,30 +5,17 @@ from string import Template
 from typing import Literal
 
 from app.types.item import Item, ScoredItem
-from app.types.thread_message import ThreadMessage
 
 
 class PromptGenerator:
     @classmethod
-    @lru_cache(maxsize=1)
-    def system_prompt(cls) -> str:
-        return __read_file_content("system_prompt.md")
-
-    @classmethod
-    def user_prompt(
+    def system_prompt(
         cls,
-        question: str,
-        message_history: list[ThreadMessage] = [],
         recommendations: list[ScoredItem] = [],
     ) -> str:
-        file_content = __read_user_prompt_file()
+        file_content = __read_system_prompt_file()
 
         user_template = Template(file_content)
-
-        formatted_history = "\n".join(
-            json.dumps({"role": msg.role.value, "message": msg.content})
-            for msg in message_history[-5:]
-        )
 
         formatted_recommendations = "\n".join(
             json.dumps(
@@ -45,9 +32,7 @@ class PromptGenerator:
 
         prompt = user_template.substitute(
             {
-                "message_history": formatted_history,
                 "recommendations": formatted_recommendations,
-                "question": question,
             }
         )
 
@@ -77,8 +62,8 @@ class PromptGenerator:
 
 
 @lru_cache(maxsize=1)
-def __read_user_prompt_file():
-    return __read_file_content("user_prompt.md")
+def __read_system_prompt_file():
+    return __read_file_content("system_prompt.md")
 
 
 @lru_cache(maxsize=1)

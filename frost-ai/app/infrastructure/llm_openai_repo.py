@@ -12,7 +12,9 @@ class LlmOpenaiRepository:
             model="o4-mini",
             messages=[
                 {
-                    "role": "user" if message.role == LlmMessageRole.USER else "system",
+                    "role": (
+                        "user" if message.role == LlmMessageRole.USER else "assistant"
+                    ),
                     "content": message.content,
                 }
                 for message in messages

@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from app import config
 from app.prompts.prompt_generator import PromptGenerator
 from app.types.llm import LlmMessage, LlmMessageRole
+from app.types.message_type import MessageType
 from app.types.thread_message import ThreadMessage, ThreadMessageRole
 
 
@@ -35,18 +36,16 @@ async def answer(command: AnswerCommand) -> AnswerResult:
     # Retrieve recommendations
     recommendations = recommendation_repo.recommend(question=command.message)
 
-    # Send question to llm
+    # Send mssages to llm
     answer = llm_repo.ask(
         messages=[
             LlmMessage(
-                content=PromptGenerator.system_prompt(), role=LlmMessageRole.SYSTEM
+                content=PromptGenerator.system_prompt(recommendations=recommendations),
+                role=LlmMessageRole.SYSTEM,
             ),
+            *[message.to_llm_message() for message in message_history],
             LlmMessage(
-                content=PromptGenerator.user_prompt(
-                    question=command.message,
-                    message_history=message_history,
-                    recommendations=recommendations,
-                ),
+                content=command.message,
                 role=LlmMessageRole.USER,
             ),
         ]
@@ -57,14 +56,16 @@ async def answer(command: AnswerCommand) -> AnswerResult:
     await thread_repo.save_messages(
         [
             ThreadMessage(
-                role=ThreadMessageRole.USER,
+                message_role=ThreadMessageRole.USER,
                 content=command.message,
                 thread_id=thread_id,
+                message_type=MessageType.TEXT,
             ),
             ThreadMessage(
-                role=ThreadMessageRole.AI,
+                message_role=ThreadMessageRole.AI,
                 content=answer,
                 thread_id=thread_id,
+                message_type=MessageType.TEXT,
             ),
         ]
     )
