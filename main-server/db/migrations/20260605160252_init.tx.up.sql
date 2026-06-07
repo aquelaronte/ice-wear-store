@@ -10,6 +10,7 @@ CREATE TABLE item (
     id UUID PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
+    llm_description TEXT,
     price BIGINT NOT NULL,
     source source NOT NULL DEFAULT 'own',
     pictures TEXT[],
