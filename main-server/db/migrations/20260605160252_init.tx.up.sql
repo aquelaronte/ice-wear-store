@@ -3,6 +3,8 @@ SET statement_timeout = 0;
 SELECT 1;
 
 CREATE TYPE source AS ENUM ('clemont', 'undergold', 'own');
+CREATE TYPE message_role AS ENUM ('user', 'ai');
+CREATE TYPE message_type AS ENUM ('text', 'image');
 
 CREATE TABLE item (
     id UUID PRIMARY KEY,
@@ -43,6 +45,10 @@ CREATE TABLE thread (
 
 CREATE TABLE thread_message (
     id UUID,
+
+    content TEXT NOT NULL,
+    message_role message_role NOT NULL DEFAULT 'user',
+    message_type message_type NOT NULL DEFAULT 'text',
 
     thread_id UUID NOT NULL REFERENCES thread(id) ON DELETE CASCADE,
 
