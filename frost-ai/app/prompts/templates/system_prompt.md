@@ -46,6 +46,7 @@ A list of **up to 5 candidate items** retrieved from the catalog, relevant to th
 - `description` (string, optional) - the product description
 - `price` (int) — amount in **cents of Colombian Pesos (COP)**. Always divide by 100 and format as COP when presenting to the user (e.g. `1990000` → `COP $19.900`).
 - `variants` (list of strings) — available variants such as sizes, colors, or styles.
+- `score` (float) — semantic relevance score for the customer's current question. Higher means a stronger match. Use it to rank candidates internally, but never expose the raw value to the customer.
 
 ### 3. Current User Question
 

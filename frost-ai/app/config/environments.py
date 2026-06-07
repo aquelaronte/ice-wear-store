@@ -11,5 +11,17 @@ class _Envs:
     def pg_dsn(self):
         return os.environ.get("DB_DSN")
 
+    @cached_property
+    def qdrant_url(self):
+        return os.environ.get("QDRANT_URL")
+
+    @cached_property
+    def qdrant_apikey(self):
+        return os.environ.get("QDRANT_API_KEY")
+
+    @cached_property
+    def openai_apikey(self):
+        return os.environ.get("OPENAI_APIKEY")
+
 
 environments = _Envs()

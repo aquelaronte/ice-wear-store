@@ -8,7 +8,13 @@ class LlmMessageRole(Enum):
     SYSTEM = "SYSTEM"
 
 
+class LlmMessageType(Enum):
+    TEXT = "TEXT"
+    IMAGE = "IMAGE"
+
+
 @dataclass
 class LlmMessage:
     content: str
     role: LlmMessageRole = LlmMessageRole.USER
+    message_type: LlmMessageType = LlmMessageType.TEXT

@@ -4,7 +4,7 @@ from pathlib import Path
 from string import Template
 from typing import Literal
 
-from app.types.item import Item
+from app.types.item import Item, ScoredItem
 from app.types.thread_message import ThreadMessage
 
 
@@ -19,7 +19,7 @@ class PromptGenerator:
         cls,
         question: str,
         message_history: list[ThreadMessage] = [],
-        recommendations: list[Item] = [],
+        recommendations: list[ScoredItem] = [],
     ) -> str:
         file_content = __read_user_prompt_file()
 
@@ -37,6 +37,7 @@ class PromptGenerator:
                     "description": item.description,
                     "price": item.price,
                     "variants": item.variants,
+                    "score": item.score,
                 }
             )
             for item in recommendations[:5]
