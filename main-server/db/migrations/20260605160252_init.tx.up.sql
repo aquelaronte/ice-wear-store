@@ -31,3 +31,25 @@ CREATE TABLE item_variant (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     deleted_at TIMESTAMPTZ
 );
+
+CREATE TABLE thread (
+    id UUID PRIMARY KEY,
+
+    -- metadata
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+);
+
+CREATE TABLE thread_message (
+    id UUID,
+
+    thread_id UUID NOT NULL REFERENCES thread(id) ON DELETE CASCADE,
+
+    PRIMARY KEY(thread_id, id),
+
+    -- metadata
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+);

@@ -1,4 +1,4 @@
-.PHONY: dev build-migrate populate
+.PHONY: dev build-migrate populate migrate rollback
 
 LIMIT ?=
 
@@ -10,3 +10,9 @@ build-migrate:
 
 populate:
 	go run ./cmd/populate/main.go $(if $(LIMIT),-limit=$(LIMIT),)
+
+migrate:
+	go run ./cmd/migrate db migrate
+
+rollback:
+	go run ./cmd/migrate db rollback
