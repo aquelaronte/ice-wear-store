@@ -1,10 +1,11 @@
 from functools import cached_property
 
 import asyncpg
+from google import genai
 from openai import OpenAI
 from qdrant_client import QdrantClient
 
-from app.config import environments
+from app.config.environments import environments
 from app.infrastructure.llm_openai_repo import LlmOpenaiRepository
 from app.infrastructure.recommendation_qdrant_repo import RecommendationQdrantRepository
 from app.infrastructure.thread_sql_repo import ThreadSqlRepository
@@ -16,23 +17,37 @@ from app.repositories.thread_repo import ThreadRepository
 class _DependencyInjectionContainer:
     def __init__(self) -> None:
         self._pool: asyncpg.Pool | None = None
-        self._qdrant_client: QdrantClient | None = None
-        self._openai_client: OpenAI | None = None
+        self._googleai_client: genai.Client | None = None
+        self._initialized = False
 
     async def init(self) -> None:
-        if self._pool is not None:
+        if self._initialized:
             return
 
+        self._googleai_client = (
+            genai.Client()
+        )  # Loads api key automatically from environments
         self._pool = await asyncpg.create_pool(
             dsn=environments.pg_dsn, min_size=10, max_size=20
         )
+        self._initialized = True
 
     async def close(self) -> None:
-        if self._pool is None:
+        if not self._initialized:
             return
 
-        await self._pool.close()
-        self._pool = None
+        # Clean up Postgres pool
+        if self._pool is not None:
+            await self._pool.close()
+            self._pool = None
+
+        # Clena google ai client
+        if self._googleai_client is not None:
+            await self._googleai_client.aio.aclose()
+            self.googleai_client.close()
+            self._googleai_client = None
+
+        self._initialized = False
 
     @property
     def pg_conn_pool(self) -> asyncpg.Pool:
@@ -49,6 +64,11 @@ class _DependencyInjectionContainer:
     @cached_property
     def openai_client(self) -> OpenAI:
         return OpenAI(api_key=environments.openai_apikey)
+
+    @property
+    def googleai_client(self) -> genai.Client:
+        assert self._googleai_client is not None, "dependencies.init() was not called"
+        return self._googleai_client
 
     @cached_property
     def thread_repo(self) -> ThreadRepository:

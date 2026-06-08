@@ -39,6 +39,11 @@ class PromptGenerator:
         return prompt
 
     @classmethod
+    @lru_cache(maxsize=1)
+    def item_visual_description_prompt(cls) -> str:
+        return __read_file_content("item_visual_description_prompt.md")
+
+    @classmethod
     def item_embedding_prompt(
         cls,
         item: Item,
@@ -72,7 +77,11 @@ def __read_embedding_prompt_file():
 
 
 def __read_file_content(
-    file_name: Literal["system_prompt.md", "item_embedding_prompt.md"],
+    file_name: Literal[
+        "system_prompt.md",
+        "item_embedding_prompt.md",
+        "item_visual_description_prompt.md",
+    ],
 ):
     template_path = Path(__file__).parent / "templates" / file_name
     with open(template_path, "r", encoding="utf-8") as file:
