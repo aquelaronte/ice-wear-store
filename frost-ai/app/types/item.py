@@ -11,4 +11,5 @@ class Item:
 
 @dataclass
 class ScoredItem(Item):
+    visual_description: str | None
     score: float

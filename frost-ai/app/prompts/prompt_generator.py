@@ -13,7 +13,7 @@ class PromptGenerator:
         cls,
         recommendations: list[ScoredItem] = [],
     ) -> str:
-        file_content = __read_system_prompt_file()
+        file_content = _read_system_prompt_file()
 
         user_template = Template(file_content)
 
@@ -41,7 +41,7 @@ class PromptGenerator:
     @classmethod
     @lru_cache(maxsize=1)
     def item_visual_description_prompt(cls) -> str:
-        return __read_file_content("item_visual_description_prompt.md")
+        return _read_file_content("item_visual_description_prompt.md")
 
     @classmethod
     def item_embedding_prompt(
@@ -49,7 +49,7 @@ class PromptGenerator:
         item: Item,
         visual_description: str | None = None,
     ) -> str:
-        file_content = __read_embedding_prompt_file()
+        file_content = _read_embedding_prompt_file()
 
         embedding_template = Template(file_content)
 
@@ -67,16 +67,16 @@ class PromptGenerator:
 
 
 @lru_cache(maxsize=1)
-def __read_system_prompt_file():
-    return __read_file_content("system_prompt.md")
+def _read_system_prompt_file():
+    return _read_file_content("system_prompt.md")
 
 
 @lru_cache(maxsize=1)
-def __read_embedding_prompt_file():
-    return __read_file_content("item_embedding_prompt.md")
+def _read_embedding_prompt_file():
+    return _read_file_content("item_embedding_prompt.md")
 
 
-def __read_file_content(
+def _read_file_content(
     file_name: Literal[
         "system_prompt.md",
         "item_embedding_prompt.md",

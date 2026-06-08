@@ -6,11 +6,14 @@ from app.types.item import ScoredItem
 
 class RecommendationQdrantRepository:
     def __init__(
-        self, qdrant_client: AsyncQdrantClient, llm_repo: LlmRepository
+        self,
+        qdrant_client: AsyncQdrantClient,
+        llm_repo: LlmRepository,
+        collection_name: str,
     ) -> None:
         self.qdrant_client = qdrant_client
         self.llm_repo = llm_repo
-        self.collection_name = "items"
+        self.collection_name = collection_name
 
     async def recommend(self, question: str) -> list[ScoredItem]:
         question_embedding = await self.llm_repo.generate_embedding(question)
@@ -29,6 +32,7 @@ class RecommendationQdrantRepository:
             name = point.payload.get("name")
             price = point.payload.get("price")
             variants = point.payload.get("variants")
+            visual_description = point.payload.get("visual_description")
 
             if not isinstance(name, str) or not isinstance(price, int):
                 continue
@@ -42,6 +46,9 @@ class RecommendationQdrantRepository:
             ):
                 continue
 
+            if not isinstance(visual_description, str):
+                continue
+
             variants_typed: list[str] = (  # pyright: ignore[reportUnknownVariableType]
                 variants
             )
@@ -52,6 +59,7 @@ class RecommendationQdrantRepository:
                     description=description,
                     price=price,
                     variants=variants_typed,
+                    visual_description=visual_description,
                     score=point.score,
                 )
             )

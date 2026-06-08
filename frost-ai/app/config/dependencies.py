@@ -80,7 +80,11 @@ class _DependencyInjectionContainer:
 
     @cached_property
     def recommendation_repo(self) -> RecommendationRepository:
-        return RecommendationQdrantRepository(self.qdrant_client, self.llm_repo)
+        return RecommendationQdrantRepository(
+            self.qdrant_client,
+            self.llm_repo,
+            environments.recommendation_collection_name,
+        )
 
 
 dependencies = _DependencyInjectionContainer()

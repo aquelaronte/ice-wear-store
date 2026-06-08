@@ -23,5 +23,9 @@ class _Envs:
     def openai_apikey(self):
         return os.environ.get("OPENAI_APIKEY")
 
+    @property
+    def recommendation_collection_name(self):
+        return "items"
+
 
 environments = _Envs()
