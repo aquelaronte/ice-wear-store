@@ -30,7 +30,7 @@ class PromptGenerator:
             for item in recommendations[:5]
         )
 
-        prompt = user_template.substitute(
+        prompt = user_template.safe_substitute(
             {
                 "recommendations": formatted_recommendations,
             }
@@ -53,7 +53,7 @@ class PromptGenerator:
 
         embedding_template = Template(file_content)
 
-        prompt = embedding_template.substitute(
+        prompt = embedding_template.safe_substitute(
             {
                 "name": item.name,
                 "description": item.description or "",

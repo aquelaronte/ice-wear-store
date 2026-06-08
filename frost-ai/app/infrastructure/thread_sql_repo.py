@@ -30,7 +30,7 @@ class ThreadSqlRepository:
         ]
 
         await self.pool.executemany(
-            "INSERT INTO thread_message(id, message_role, content, thread_id, message_type) VALUES ($1, $2, $3)",
+            "INSERT INTO thread_message(id, message_role, content, thread_id, message_type) VALUES ($1, $2, $3, $4, $5)",
             arguments,
         )
 

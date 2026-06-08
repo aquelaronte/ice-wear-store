@@ -28,7 +28,7 @@ async def answer(command: AnswerCommand) -> AnswerResult:
 
     if thread_id is not None:
         message_history = await thread_repo.get_thread_messages(
-            thread_id=thread_id, limit=5
+            thread_id=thread_id, limit=6
         )
     else:
         thread_id = await thread_repo.new_thread()

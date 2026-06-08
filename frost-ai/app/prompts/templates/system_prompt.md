@@ -35,7 +35,7 @@ A list of **up to 5 candidate items** retrieved from the catalog, relevant to th
 - `score` (float) — semantic relevance score for the customer's current question. Higher means a stronger match. Use it to rank candidates internally, but never expose the raw value to the customer.
 
 ```json
-${recommendations}
+$recommendations
 ```
 
 ## Language Rule — CRITICAL
