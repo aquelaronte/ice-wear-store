@@ -23,6 +23,7 @@ func main() {
 
 	huma.Get(api, "/products", controllers.GetAllItems)
 	huma.Get(api, "/products/{id}", controllers.GetItemById)
+	huma.Post(api, "/chat", controllers.Chat)
 
 	app.Listen(fmt.Sprintf(":%s", config.Envs.Port))
 }
