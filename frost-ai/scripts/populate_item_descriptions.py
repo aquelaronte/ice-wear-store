@@ -63,9 +63,7 @@ async def process_item(
 
         # Only use semaphore for generating ai response
         async with semaphore:
-            llm_description = await asyncio.to_thread(
-                generate_pictures_description, pictures
-            )
+            llm_description = await generate_pictures_description(pictures)
 
         if llm_description is None:
             print("something went wrong while trying to generate genai description")
@@ -77,12 +75,12 @@ async def process_item(
     return row["id"], llm_description
 
 
-def generate_pictures_description(pictures: list[str] | None) -> str | None:
+async def generate_pictures_description(pictures: list[str] | None) -> str | None:
     if pictures is None or len(pictures) < 3:
         return None
 
     # Generate images description
-    response = dependencies.googleai_client.models.generate_content(  # pyright: ignore[reportUnknownMemberType]
+    response = await dependencies.googleai_client.aio.models.generate_content(  # pyright: ignore[reportUnknownMemberType]
         model="gemini-2.5-flash",
         contents=[
             PromptGenerator.item_visual_description_prompt(),

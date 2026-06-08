@@ -2,8 +2,8 @@ from functools import cached_property
 
 import asyncpg
 from google import genai
-from openai import OpenAI
-from qdrant_client import QdrantClient
+from openai import AsyncOpenAI
+from qdrant_client import AsyncQdrantClient
 
 from app.config.environments import environments
 from app.infrastructure.llm_openai_repo import LlmOpenaiRepository
@@ -55,15 +55,15 @@ class _DependencyInjectionContainer:
         return self._pool
 
     @cached_property
-    def qdrant_client(self) -> QdrantClient:
-        return QdrantClient(
+    def qdrant_client(self) -> AsyncQdrantClient:
+        return AsyncQdrantClient(
             api_key=environments.qdrant_apikey,
             url=environments.qdrant_url,
         )
 
     @cached_property
-    def openai_client(self) -> OpenAI:
-        return OpenAI(api_key=environments.openai_apikey)
+    def openai_client(self) -> AsyncOpenAI:
+        return AsyncOpenAI(api_key=environments.openai_apikey)
 
     @property
     def googleai_client(self) -> genai.Client:

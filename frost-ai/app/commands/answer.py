@@ -34,10 +34,10 @@ async def answer(command: AnswerCommand) -> AnswerResult:
         thread_id = await thread_repo.new_thread()
 
     # Retrieve recommendations
-    recommendations = recommendation_repo.recommend(question=command.message)
+    recommendations = await recommendation_repo.recommend(question=command.message)
 
     # Send mssages to llm
-    answer = llm_repo.ask(
+    answer = await llm_repo.ask(
         messages=[
             LlmMessage(
                 content=PromptGenerator.system_prompt(recommendations=recommendations),

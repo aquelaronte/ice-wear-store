@@ -1,14 +1,14 @@
-from openai import OpenAI
+from openai import AsyncOpenAI
 
 from app.types.llm import LlmMessage, LlmMessageRole
 
 
 class LlmOpenaiRepository:
-    def __init__(self, openai_client: OpenAI) -> None:
+    def __init__(self, openai_client: AsyncOpenAI) -> None:
         self.openai_client = openai_client
 
-    def ask(self, messages: list[LlmMessage]) -> str:
-        response = self.openai_client.chat.completions.create(
+    async def ask(self, messages: list[LlmMessage]) -> str:
+        response = await self.openai_client.chat.completions.create(
             model="o4-mini",
             messages=[
                 {
@@ -28,8 +28,8 @@ class LlmOpenaiRepository:
 
         return answer
 
-    def generate_embedding(self, to_embed: str) -> list[float]:
-        embedding = self.openai_client.embeddings.create(
+    async def generate_embedding(self, to_embed: str) -> list[float]:
+        embedding = await self.openai_client.embeddings.create(
             input=to_embed,
             model="text-embedding-3-small",
             encoding_format="float",

@@ -1,19 +1,21 @@
-from qdrant_client import QdrantClient
+from qdrant_client import AsyncQdrantClient
 
 from app.repositories.llm_repo import LlmRepository
 from app.types.item import ScoredItem
 
 
 class RecommendationQdrantRepository:
-    def __init__(self, qdrant_client: QdrantClient, llm_repo: LlmRepository) -> None:
+    def __init__(
+        self, qdrant_client: AsyncQdrantClient, llm_repo: LlmRepository
+    ) -> None:
         self.qdrant_client = qdrant_client
         self.llm_repo = llm_repo
         self.collection_name = "items"
 
-    def recommend(self, question: str) -> list[ScoredItem]:
-        question_embedding = self.llm_repo.generate_embedding(question)
+    async def recommend(self, question: str) -> list[ScoredItem]:
+        question_embedding = await self.llm_repo.generate_embedding(question)
 
-        results = self.qdrant_client.query_points(
+        results = await self.qdrant_client.query_points(
             collection_name=self.collection_name, query=question_embedding, limit=5
         )
 
