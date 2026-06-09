@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   qdrant:
     image: qdrant/qdrant:latest
@@ -9,8 +7,8 @@ services:
       - "6333:6333" # REST API & Web UI
       - "6334:6334" # gRPC API
     volumes:
-      - qdrant_storage:/qdrant/storage:z
-      - qdrant_snapshots:/qdrant/snapshots:z
+      - qdrant_storage:/qdrant/storage
+      - qdrant_snapshots:/qdrant/snapshots
     environment:
       - QDRANT__SERVICE__API_KEY=secret_api_key
 
