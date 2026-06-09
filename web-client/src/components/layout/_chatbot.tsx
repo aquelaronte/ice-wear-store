@@ -1,32 +1,39 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import { useChat } from "@ai-sdk/react"
-import { DefaultChatTransport } from "ai"
-import { MessageCircle, X, Send, Snowflake } from "lucide-react"
+import { useState, useRef, useEffect } from "react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { MessageCircle, X, Send, Snowflake } from "lucide-react";
 
-const SUGGESTIONS = ["What's the warmest jacket?", "Help me pick a size", "What goes with the parka?"]
+const SUGGESTIONS = [
+  "What's the warmest jacket?",
+  "Help me pick a size",
+  "What goes with the parka?",
+];
 
 export function Chatbot() {
-  const [open, setOpen] = useState(false)
-  const [input, setInput] = useState("")
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
-  })
+  });
 
-  const isBusy = status === "streaming" || status === "submitted"
+  const isBusy = status === "streaming" || status === "submitted";
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" })
-  }, [messages, open])
+    scrollRef.current?.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages, open]);
 
   function submit(text: string) {
-    const value = text.trim()
-    if (!value || isBusy) return
-    sendMessage({ text: value })
-    setInput("")
+    const value = text.trim();
+    if (!value || isBusy) return;
+    sendMessage({ text: value });
+    setInput("");
   }
 
   return (
@@ -43,7 +50,9 @@ export function Chatbot() {
       {/* Panel */}
       <div
         className={`fixed bottom-24 right-5 z-50 flex w-[min(calc(100vw-2.5rem),24rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl transition-all duration-300 ${
-          open ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
+          open
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-4 opacity-0"
         }`}
         style={{ height: "min(32rem, calc(100vh - 8rem))" }}
         role="dialog"
@@ -55,16 +64,21 @@ export function Chatbot() {
           </div>
           <div>
             <p className="text-sm font-semibold leading-tight">Frost</p>
-            <p className="text-xs text-primary-foreground/80">Ice Wear stylist</p>
+            <p className="text-xs text-primary-foreground/80">
+              Ice Wear stylist
+            </p>
           </div>
         </header>
 
-        <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+        <div
+          ref={scrollRef}
+          className="flex-1 space-y-4 overflow-y-auto px-4 py-4"
+        >
           {messages.length === 0 && (
             <div className="space-y-4">
               <div className="rounded-2xl rounded-tl-sm bg-secondary px-4 py-3 text-sm text-secondary-foreground">
-                Hi, I&apos;m Frost. Ask me anything about staying warm — I can help you pick layers, sizes and
-                pairings.
+                Hi, I&apos;m Frost. Ask me anything about staying warm — I can
+                help you pick layers, sizes and pairings.
               </div>
               <div className="flex flex-col gap-2">
                 {SUGGESTIONS.map((s) => (
@@ -84,10 +98,13 @@ export function Chatbot() {
             const text = message.parts
               .filter((p) => p.type === "text")
               .map((p) => ("text" in p ? p.text : ""))
-              .join("")
-            const isUser = message.role === "user"
+              .join("");
+            const isUser = message.role === "user";
             return (
-              <div key={message.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+              <div
+                key={message.id}
+                className={`flex ${isUser ? "justify-end" : "justify-start"}`}
+              >
                 <div
                   className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                     isUser
@@ -98,7 +115,7 @@ export function Chatbot() {
                   {text}
                 </div>
               </div>
-            )
+            );
           })}
 
           {isBusy && messages[messages.length - 1]?.role === "user" && (
@@ -114,8 +131,8 @@ export function Chatbot() {
 
         <form
           onSubmit={(e) => {
-            e.preventDefault()
-            submit(input)
+            e.preventDefault();
+            submit(input);
           }}
           className="flex items-center gap-2 border-t border-border p-3"
         >
@@ -136,5 +153,5 @@ export function Chatbot() {
         </form>
       </div>
     </>
-  )
+  );
 }

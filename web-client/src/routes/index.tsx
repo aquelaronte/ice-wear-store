@@ -1,15 +1,32 @@
 import { ProductCard } from "@/components/product-card";
 import { ProductCardSkeleton } from "@/components/product-card-skeleton";
+import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import heroIceUrl from "@/assets/hero-ice.png";
 import { $api } from "@/api/client";
+
+const PAGE_SIZE = 8;
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { data, isLoading } = $api.useQuery("get", "/products");
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = $api.useQuery("get", "/products", {
+    params: {
+      query: {
+        skip: (page - 1) * PAGE_SIZE,
+        take: PAGE_SIZE,
+      },
+    },
+  });
+
+  const total = data?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const hasPrev = page > 1;
+  const hasNext = page < totalPages;
 
   return (
     <main className="min-h-screen">
@@ -56,15 +73,39 @@ function RouteComponent() {
             {isLoading ? "Loading…" : `${data?.count ?? 0} pieces`}
           </span>
         </div>
-        <div className="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4">
           {isLoading
-            ? Array.from({ length: 6 }).map((_, i) => (
+            ? Array.from({ length: PAGE_SIZE }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))
             : data?.items?.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
         </div>
+
+        {!isLoading && total > PAGE_SIZE && (
+          <div className="mt-12 flex items-center justify-between gap-4">
+            <Button
+              variant="outline"
+              size="lg"
+              disabled={!hasPrev}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground tabular-nums">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="lg"
+              disabled={!hasNext}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </section>
 
       <footer className="border-t border-border">

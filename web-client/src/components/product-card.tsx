@@ -30,12 +30,11 @@ export function ProductCard({
           />
         )}
       </div>
-      <div className="mt-3 flex items-start justify-between gap-3">
+      <div className="mt-3 flex flex-col items-start justify-between gap-1">
         <div>
-          <h3 className="font-medium leading-tight">{product.name}</h3>
-          {/* <p className="text-sm text-muted-foreground">{product.category}</p> */}
+          <h3 className="leading-tight font-light">{product.name}</h3>
         </div>
-        <span className="font-medium tabular-nums">
+        <span className="font-light text-muted-foreground tabular-nums text-sm">
           {formatPrice(product.price)}
         </span>
       </div>
