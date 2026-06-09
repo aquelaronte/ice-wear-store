@@ -2,6 +2,12 @@ from openai import AsyncOpenAI
 
 from app.types.llm import LlmMessage, LlmMessageRole
 
+_ROLE_MAP = {
+    LlmMessageRole.USER: "user",
+    LlmMessageRole.AI: "assistant",
+    LlmMessageRole.SYSTEM: "developer",
+}
+
 
 class LlmOpenaiRepository:
     def __init__(self, openai_client: AsyncOpenAI) -> None:
@@ -11,13 +17,7 @@ class LlmOpenaiRepository:
         response = await self.openai_client.chat.completions.create(
             model="o4-mini",
             messages=[
-                {
-                    "role": (
-                        "user" if message.role == LlmMessageRole.USER else "assistant"
-                    ),
-                    "content": message.content,
-                }
-                for message in messages
+                {"role": _ROLE_MAP[m.role], "content": m.content} for m in messages
             ],  # pyright: ignore[reportArgumentType]
         )
 
