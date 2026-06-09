@@ -2,18 +2,28 @@ package controllers
 
 import (
 	"context"
+	"strings"
 
 	"arias.systems.ice-wear-store/main-server/helpers"
 	"arias.systems.ice-wear-store/main-server/internal/controllers/types"
 	"arias.systems.ice-wear-store/main-server/internal/entities"
+	"github.com/uptrace/bun"
 )
 
 func GetAllItems(ctx context.Context, input *types.GetAllItemsInput) (*types.GetAllItemsOutput, error) {
 	db := helpers.GetDB()
 
 	var items []entities.Item
-	count, err := db.NewSelect().
-		Model(&items).
+	q := db.NewSelect().Model(&items)
+
+	if search := strings.TrimSpace(input.Search); search != "" {
+		pattern := "%" + search + "%"
+		q = q.
+			Where("name ILIKE ? OR description ILIKE ?", pattern, pattern).
+			OrderExpr("GREATEST(similarity(name, ?), similarity(COALESCE(description, ''), ?)) DESC", search, search)
+	}
+
+	count, err := q.
 		Offset(input.Skip).
 		Limit(input.Take).
 		ScanAndCount(ctx)
@@ -43,5 +53,28 @@ func GetItemById(ctx context.Context, input *types.GetItemByIdInput) (*types.Get
 
 	out := &types.GetItemByIdOutput{}
 	out.Body.Item = item
+	return out, nil
+}
+
+func GetItemsByIdList(ctx context.Context, input *types.GetAllItemsByIdListInput) (*types.GetAllItemsByIdListOutput, error) {
+	db := helpers.GetDB()
+
+	out := &types.GetAllItemsByIdListOutput{}
+	if len(input.IDs) == 0 {
+		out.Body.Items = []entities.Item{}
+		return out, nil
+	}
+
+	var items []entities.Item
+	err := db.NewSelect().
+		Model(&items).
+		Where("id IN (?)", bun.List(input.IDs)).
+		Scan(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	out.Body.Items = items
 	return out, nil
 }

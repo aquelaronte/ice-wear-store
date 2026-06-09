@@ -22,6 +22,7 @@ func main() {
 	helpers.InitDB(helpers.NewDBFromEnv())
 
 	huma.Get(api, "/products", controllers.GetAllItems)
+	huma.Get(api, "/products/id-list", controllers.GetItemsByIdList)
 	huma.Get(api, "/products/{id}", controllers.GetItemById)
 	huma.Post(api, "/chat", controllers.Chat)
 
