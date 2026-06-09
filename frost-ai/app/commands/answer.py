@@ -1,10 +1,15 @@
+import re
+
 from pydantic import BaseModel
 
 from app import config
 from app.prompts.prompt_generator import PromptGenerator
+from app.types.item import ScoredItem
 from app.types.llm import LlmMessage, LlmMessageRole
 from app.types.message_type import MessageType
 from app.types.thread_message import ThreadMessage, ThreadMessageRole
+
+_ITEM_TAG_PATTERN = re.compile(r"\[ITEM:\s*(\d+)\s*\]")
 
 
 class AnswerCommand(BaseModel):
@@ -51,6 +56,11 @@ async def answer(command: AnswerCommand) -> AnswerResult:
         ]
     )
 
+    # Replace [ITEM: <index>] tags emitted by the LLM with [ITEM: <item_id>]
+    # so the frontend can resolve each reference against the catalog. Indices
+    # that fall outside the recommendations slice (rare case) the model saw are dropped.
+    answer = _replace_item_tags(answer, recommendations[:5])
+
     # Save messages in thread so they can be retrieved by the LLM
     # in the next interaction
     await thread_repo.save_messages(
@@ -73,3 +83,13 @@ async def answer(command: AnswerCommand) -> AnswerResult:
     return AnswerResult(
         answer=answer, new_thread_id=thread_id if command.thread_id is None else None
     )
+
+
+def _replace_item_tags(answer: str, recommendations: list[ScoredItem]) -> str:
+    def resolve(match: re.Match[str]) -> str:
+        index = int(match.group(1))
+        if 0 <= index < len(recommendations):
+            return f"[ITEM: {recommendations[index].item_id}]"
+        return ""  # remove tag if it can't be resolved
+
+    return _ITEM_TAG_PATTERN.sub(resolve, answer)

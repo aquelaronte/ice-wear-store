@@ -20,6 +20,7 @@ class PromptGenerator:
         formatted_recommendations = "\n".join(
             json.dumps(
                 {
+                    "index": index,
                     "name": item.name,
                     "description": item.description,
                     "price": item.price,
@@ -27,7 +28,7 @@ class PromptGenerator:
                     "score": item.score,
                 }
             )
-            for item in recommendations[:5]
+            for index, item in enumerate(recommendations[:5])
         )
 
         prompt = user_template.safe_substitute(
