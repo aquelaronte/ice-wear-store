@@ -66,10 +66,11 @@ func GetItemsByIdList(ctx context.Context, input *types.GetAllItemsByIdListInput
 	}
 
 	var items []entities.Item
-	err := db.NewSelect().
+	sel := db.NewSelect().
 		Model(&items).
-		Where("id IN (?)", bun.List(input.IDs)).
-		Scan(ctx)
+		Where("id IN (?)", bun.List(input.IDs))
+
+	err := sel.Scan(ctx)
 
 	if err != nil {
 		return nil, err

@@ -26,7 +26,7 @@ type GetItemByIdOutput struct {
 }
 
 type GetAllItemsByIdListInput struct {
-	IDs []string `query:"ids"`
+	IDs []string `query:"ids,explode"`
 }
 
 type GetAllItemsByIdListOutput struct {
