@@ -1,7 +1,7 @@
 const SUGGESTIONS = [
-  "What's the warmest jacket?",
-  "Help me pick a size",
-  "What goes with the parka?",
+  "Quiero un outfit de estilo aesthetic",
+  "Muéstrame una camiseta que combine con un pantalón negro",
+  "Recomiéndame zapatos negros para hombre",
 ];
 
 export interface ChatbotWelcomeProps {
@@ -11,8 +11,8 @@ export function ChatbotWelcome({ submit }: ChatbotWelcomeProps) {
   return (
     <div className="space-y-4">
       <div className="rounded-2xl rounded-tl-sm bg-secondary px-4 py-3 text-sm text-secondary-foreground">
-        Hi, I&apos;m Frost. Ask me anything about staying warm — I can help you
-        pick layers, sizes and pairings.
+        Hola, soy Frost. Pregúntame lo que sea acerca de nuestro catálogo. Puedo
+        ayudarte escogiendo tallas, prendas y outfits
       </div>
       <div className="flex flex-col gap-2">
         {SUGGESTIONS.map((s) => (
