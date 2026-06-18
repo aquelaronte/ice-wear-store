@@ -1,5 +1,9 @@
-from qdrant_client import AsyncQdrantClient
+import asyncio
 
+from qdrant_client import AsyncQdrantClient
+from qdrant_client.models import Fusion, FusionQuery, Prefetch
+
+from app.repositories.llm_image_repo import LlmImageRepository
 from app.repositories.llm_repo import LlmRepository
 from app.types.item import ScoredItem
 
@@ -9,18 +13,57 @@ class RecommendationQdrantRepository:
         self,
         qdrant_client: AsyncQdrantClient,
         llm_repo: LlmRepository,
+        llm_image_repo: LlmImageRepository,
         collection_name: str,
     ) -> None:
         self.qdrant_client = qdrant_client
         self.llm_repo = llm_repo
         self.collection_name = collection_name
+        self.llm_image_repo = llm_image_repo
 
-    async def recommend(self, question: str) -> list[ScoredItem]:
-        question_embedding = await self.llm_repo.generate_embedding(question)
+    async def recommend(
+        self, question: str, image_urls: list[str] | None = []
+    ) -> list[ScoredItem]:
+        # Run embedding generation for question and images in parallel
+        images_embedding_task = None
 
-        results = await self.qdrant_client.query_points(
-            collection_name=self.collection_name, query=question_embedding, limit=5
+        async with asyncio.TaskGroup() as tg:
+            question_embedding_task = tg.create_task(
+                self.llm_repo.generate_embedding(question)
+            )
+
+            if image_urls:
+                images_embedding_task = tg.create_task(
+                    self.llm_image_repo.generate_images_embedding(image_urls)
+                )
+
+        # Gather results
+        question_embedding = question_embedding_task.result()
+        images_embedding = (
+            images_embedding_task.result()
+            if images_embedding_task is not None
+            else None
         )
+
+        if images_embedding is not None and images_embedding:
+            # Perform fusion query if images_embedding is present
+            results = await self.qdrant_client.query_points(
+                collection_name=self.collection_name,
+                prefetch=[
+                    Prefetch(query=question_embedding, using="description", limit=20),
+                    Prefetch(query=images_embedding, using="pictures", limit=20),
+                ],
+                query=FusionQuery(fusion=Fusion.RRF),
+                limit=5,
+            )
+        else:
+            # Perform a single query if there are no images_embedding
+            results = await self.qdrant_client.query_points(
+                collection_name=self.collection_name,
+                query=question_embedding,
+                using="description",
+                limit=5,
+            )
 
         items: list[ScoredItem] = []
 

@@ -39,6 +39,7 @@ A list of **up to 5 candidate items** retrieved from the catalog, relevant to th
 $recommendations
 ```
 
+$image_context
 ## Item Tag — CRITICAL
 
 When you reference a product from the recommendations list, you **MUST** embed it using the tag:

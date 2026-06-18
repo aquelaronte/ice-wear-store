@@ -6,12 +6,24 @@ from typing import Literal
 
 from app.types.item import Item, ScoredItem
 
+_IMAGE_CONTEXT_BLOCK = """## Visual Reference — CRITICAL
+
+The customer attached one or more reference photos with this message. The recommendations above were **already filtered by visual similarity** to those photos, so treat them as visually matching what the customer showed.
+
+You cannot see the photo yourself, but the catalog search already used it. Therefore:
+
+- **Do NOT ask the customer to describe the item's appearance** — garment type, color, pattern, or style. The visual match is already done.
+- Assume the request "find something like this" refers to the attached photo, and present the recommendations as visually similar picks.
+- You MAY still ask about size, budget, gender fit, or occasion **only if** it genuinely helps narrow the choice — never about how the item looks.
+"""
+
 
 class PromptGenerator:
     @classmethod
     def system_prompt(
         cls,
         recommendations: list[ScoredItem] = [],
+        image_attached: bool = False,
     ) -> str:
         file_content = _read_system_prompt_file()
 
@@ -34,6 +46,7 @@ class PromptGenerator:
         prompt = user_template.safe_substitute(
             {
                 "recommendations": formatted_recommendations,
+                "image_context": _IMAGE_CONTEXT_BLOCK if image_attached else "",
             }
         )
 

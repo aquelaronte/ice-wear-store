@@ -6,9 +6,11 @@ from openai import AsyncOpenAI
 from qdrant_client import AsyncQdrantClient
 
 from app.config.environments import environments
+from app.infrastructure.llm_image_googleai_repo import LlmImageGoogleaiRepository
 from app.infrastructure.llm_openai_repo import LlmOpenaiRepository
 from app.infrastructure.recommendation_qdrant_repo import RecommendationQdrantRepository
 from app.infrastructure.thread_sql_repo import ThreadSqlRepository
+from app.repositories.llm_image_repo import LlmImageRepository
 from app.repositories.llm_repo import LlmRepository
 from app.repositories.recommendation_repo import RecommendationRepository
 from app.repositories.thread_repo import ThreadRepository
@@ -79,10 +81,15 @@ class _DependencyInjectionContainer:
         return LlmOpenaiRepository(self.openai_client)
 
     @cached_property
+    def llm_image_repo(self) -> LlmImageRepository:
+        return LlmImageGoogleaiRepository(self.googleai_client)
+
+    @cached_property
     def recommendation_repo(self) -> RecommendationRepository:
         return RecommendationQdrantRepository(
             self.qdrant_client,
             self.llm_repo,
+            self.llm_image_repo,
             environments.recommendation_collection_name,
         )
 

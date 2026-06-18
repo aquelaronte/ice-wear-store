@@ -14,6 +14,7 @@ _ITEM_TAG_PATTERN = re.compile(r"\[ITEM:\s*(\d+)\s*\]")
 
 class AnswerCommand(BaseModel):
     message: str
+    image_urls: list[str] | None = None
     thread_id: str | None = None
 
 
@@ -39,13 +40,18 @@ async def answer(command: AnswerCommand) -> AnswerResult:
         thread_id = await thread_repo.new_thread()
 
     # Retrieve recommendations
-    recommendations = await recommendation_repo.recommend(question=command.message)
+    recommendations = await recommendation_repo.recommend(
+        question=command.message, image_urls=command.image_urls
+    )
 
     # Send mssages to llm
     answer = await llm_repo.ask(
         messages=[
             LlmMessage(
-                content=PromptGenerator.system_prompt(recommendations=recommendations),
+                content=PromptGenerator.system_prompt(
+                    recommendations=recommendations,
+                    image_attached=bool(command.image_urls),
+                ),
                 role=LlmMessageRole.SYSTEM,
             ),
             *[message.to_llm_message() for message in message_history],

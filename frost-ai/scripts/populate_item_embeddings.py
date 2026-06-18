@@ -70,6 +70,7 @@ async def generate_point(
     variants: list[str] = row.get("variants")  # pyright: ignore[reportAssignmentType]
     price = row.get("price")
     llm_description = row.get("llm_description")
+    pictures = row.get("pictures")
 
     if any(x is None for x in (name, variants, price, item_id)):
         logger.warning(
@@ -91,10 +92,13 @@ async def generate_point(
 
     logger.info("generating embedding for item %r", name)
     async with semaphore:
+        pictures_embedding: list[float] = []
+
         try:
             result = await dependencies.openai_client.embeddings.create(
                 input=PromptGenerator.item_embedding_prompt(
                     item=Item(
+                        item_id=item_id,  # pyright: ignore[reportArgumentType]
                         description=description,
                         name=name,  # pyright: ignore[reportArgumentType]
                         price=price,
@@ -104,6 +108,13 @@ async def generate_point(
                 ),
                 model="text-embedding-3-small",
             )
+
+            if pictures is not None and pictures:
+                pictures_embedding = (
+                    await dependencies.llm_image_repo.generate_images_embedding(
+                        image_urls=pictures,
+                    )
+                )
         except Exception:
             logger.exception("embedding call raised for item %r", name)
             return None
@@ -113,7 +124,7 @@ async def generate_point(
 
         return PointStruct(
             id=point_id,
-            vector=embedding,
+            vector={"description": embedding, "pictures": pictures_embedding},
             payload={
                 "name": name,
                 "description": description,
@@ -137,7 +148,12 @@ async def create_collection():
 
     await dependencies.qdrant_client.create_collection(
         collection_name=environments.recommendation_collection_name,
-        vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
+        vectors_config={
+            "description": models.VectorParams(
+                size=1536, distance=models.Distance.COSINE
+            ),
+            "pictures": models.VectorParams(size=3072, distance=models.Distance.COSINE),
+        },
     )
     logger.info("collection created")
 
