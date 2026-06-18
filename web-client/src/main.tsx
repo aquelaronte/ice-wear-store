@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import { queryClient } from "./api/query-client";
 import "./index.css";
+import { initI18n } from "./lib/i18n/init";
 
 const router = createRouter({
   routeTree,
@@ -19,6 +20,7 @@ declare module "@tanstack/react-router" {
   }
 }
 
+initI18n();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>

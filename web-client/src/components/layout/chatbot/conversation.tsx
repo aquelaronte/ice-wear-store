@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useChatbot } from "./hooks/use-chatbot";
 import { ChatbotWelcome } from "./welcome";
 import { ChatbotMessage } from "./message";
+import { useTranslation } from "react-i18next";
 
 export interface ChatbotConversationProps {
   open: boolean;
@@ -19,6 +20,8 @@ export function ChatbotConversation({ open }: ChatbotConversationProps) {
     });
   }, [messages, open]);
 
+  const { t } = useTranslation();
+
   return (
     <PopoverContent align="end" className="p-0 overflow-hidden w-100">
       <header className="flex items-center gap-3 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
@@ -27,7 +30,9 @@ export function ChatbotConversation({ open }: ChatbotConversationProps) {
         </div>
         <div>
           <p className="text-sm font-semibold leading-tight">Frost</p>
-          <p className="text-xs text-primary-foreground/80">Ice Wear stylist</p>
+          <p className="text-xs text-primary-foreground/80">
+            {t("frost.description")}
+          </p>
         </div>
       </header>
 

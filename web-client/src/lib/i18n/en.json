@@ -1,0 +1,21 @@
+{
+  "search": {
+    "placeholder": "Type something...",
+    "noResults": "No results for \"{{query}}\"",
+    "empty": "No pieces available."
+  },
+  "loading...": "Loading...",
+  "pieces": "Pieces",
+  "previous": "Previous",
+  "next": "Next",
+  "pageOf": "Page {{page}} of {{totalPages}}",
+  "frost": {
+    "description": "Ice Wear stylist",
+    "welcome": "Hello, I'm Frost. Ask me anything from our catalog. I can help you choosing sizes, clothes and outfits.",
+    "suggestions": {
+      "0": "I want an aesthetic style outfit",
+      "1": "Show me a t-shirt that matches black pants",
+      "2": "Recommend me black shoes for men"
+    }
+  }
+}
