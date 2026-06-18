@@ -32,6 +32,18 @@ export function ChatbotMessage({ message }: { message: Message }) {
             : "rounded-tl-sm bg-secondary text-secondary-foreground",
         )}
       >
+        {message.images && message.images.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {message.images.map((src, i) => (
+              <img
+                key={src + i}
+                src={src}
+                alt=""
+                className="size-28 rounded-lg object-cover"
+              />
+            ))}
+          </div>
+        )}
         {content}
       </div>
     </div>
