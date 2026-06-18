@@ -55,7 +55,9 @@ class RecommendationQdrantRepository:
 
             items.append(
                 ScoredItem(
-                    item_id=str(point.id),
+                    item_id=str(
+                        point.id
+                    ),  # Point ID is the same ID as the item in Database
                     name=name,
                     description=description,
                     price=price,
