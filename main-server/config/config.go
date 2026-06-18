@@ -11,6 +11,7 @@ type Config struct {
 	Port        string
 	CORSOrigins []string
 	FrostAIURL  string
+	UploadDir   string
 	DB          struct {
 		Host     string
 		Port     string
@@ -29,6 +30,7 @@ func initConfig() Config {
 		Port:        getEnv("PORT", "8000"),
 		CORSOrigins: splitAndTrim(getEnv("CORS_ORIGINS", "*")),
 		FrostAIURL:  getEnv("FROST_AI_URL", "http://localhost:8001"),
+		UploadDir:   "./uploads",
 		DB: struct {
 			Host     string
 			Port     string

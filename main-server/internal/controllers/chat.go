@@ -13,8 +13,9 @@ import (
 )
 
 type frostAnswerRequest struct {
-	Message  string  `json:"message"`
-	ThreadID *string `json:"thread_id,omitempty"`
+	Message   string   `json:"message"`
+	ThreadID  *string  `json:"thread_id,omitempty"`
+	ImageUrls []string `json:"image_urls,omitempty"`
 }
 
 type frostAnswerResponse struct {
@@ -24,8 +25,9 @@ type frostAnswerResponse struct {
 
 func Chat(ctx context.Context, input *types.ChatInput) (*types.ChatOutput, error) {
 	payload, err := json.Marshal(frostAnswerRequest{
-		Message:  input.Body.Message,
-		ThreadID: input.Body.ThreadID,
+		Message:   input.Body.Message,
+		ThreadID:  input.Body.ThreadID,
+		ImageUrls: input.Body.ImageUrls,
 	})
 	if err != nil {
 		return nil, err

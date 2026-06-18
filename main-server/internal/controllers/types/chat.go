@@ -2,8 +2,9 @@ package types
 
 type ChatInput struct {
 	Body struct {
-		Message  string  `json:"message" doc:"User message to send to the chatbot"`
-		ThreadID *string `json:"thread_id,omitempty" doc:"Existing thread id to continue the conversation"`
+		Message   string   `json:"message" doc:"User message to send to the chatbot"`
+		ThreadID  *string  `json:"thread_id,omitempty" doc:"Existing thread id to continue the conversation"`
+		ImageUrls []string `json:"image_urls,omitempty" doc:"Existing thread id to continue the conversation"`
 	}
 }
 
