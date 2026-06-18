@@ -9,6 +9,22 @@ understands both **text and images**.
 Ask it "show me a black oversized tee under $40" or drop in a photo of an outfit
 you like, and it answers with real items from the crawled collections.
 
+[![Watch the video](https://www.youtube.com/watch?v=Hx3P3bLS944)](https://www.youtube.com/watch?v=Hx3P3bLS944)
+
+> ### ⚠️ Disclaimer
+>
+> This is an **educational, non-commercial project** built solely for my personal
+> portfolio. It does **not** generate any revenue and has **no commercial intent**.
+>
+> It is **not affiliated with, endorsed by, or connected to Clemont or Undergold**.
+> Their publicly available catalog data is used only to demonstrate
+> retrieval-augmented generation and multimodal search — there is no monetization,
+> resale, or redistribution of their products.
+>
+> To Clemont and Undergold: this is a learning showcase only, with nothing to be
+> concerned about. If either brand would like any changes or its data removed,
+> I'll gladly comply on request.
+
 ## How it works
 
 ```mermaid
