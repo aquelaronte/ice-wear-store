@@ -1,7 +1,7 @@
 # Ice Wear Store
 
 An AI chatbot for streetwear shopping. It ingests the public catalogs of two
-brands — **Clemont** ([clemont.go](https://clemont.go)) and **Undergold**
+brands — **Clemont** ([clemont.go](https://clemont.co)) and **Undergold**
 ([undergoldapparel.com](https://undergoldapparel.com)) — and lets users browse
 and ask for product recommendations through a conversational assistant that
 understands both **text and images**.
