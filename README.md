@@ -9,7 +9,8 @@ understands both **text and images**.
 Ask it "show me a black oversized tee under $40" or drop in a photo of an outfit
 you like, and it answers with real items from the crawled collections.
 
-[![Watch the video](https://www.youtube.com/watch?v=Hx3P3bLS944)](https://www.youtube.com/watch?v=Hx3P3bLS944)
+[![Watch demo (ENG)](https://img.shields.io/badge/Watch%20demo-ENG-red?logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=Hx3P3bLS944)
+[![Mira el video (ESP)](https://img.shields.io/badge/Mira%20el%20video-ESP-red?logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=hqhJbz8XrlI)
 
 > ### ⚠️ Disclaimer
 >
