@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"database/sql"
-	"fmt"
 
 	"arias.systems.ice-wear-store/main-server/config"
 	"github.com/uptrace/bun"
@@ -26,32 +25,10 @@ func GetDB() *bun.DB {
 	return db
 }
 
-// NewDBFromEnv builds a *bun.DB from config.Envs. Typically passed to InitDB
-// in main; tests should build their own via GetDBFromDSN instead.
+// NewDBFromEnv builds a *bun.DB from the DB_DSN in config.Envs. Typically passed
+// to InitDB in main; tests should build their own via GetDBFromDSN instead.
 func NewDBFromEnv() *bun.DB {
-	password := config.Envs.DB.Password
-
-	var dsn string
-	if password == nil {
-		dsn = fmt.Sprintf(
-			"postgres://%s@%s:%s/%s?sslmode=disable",
-			config.Envs.DB.User,
-			config.Envs.DB.Host,
-			config.Envs.DB.Port,
-			config.Envs.DB.Name,
-		)
-	} else {
-		dsn = fmt.Sprintf(
-			"postgres://%s:%s@%s:%s/%s?sslmode=disable",
-			config.Envs.DB.User,
-			*password,
-			config.Envs.DB.Host,
-			config.Envs.DB.Port,
-			config.Envs.DB.Name,
-		)
-	}
-
-	return GetDBFromDSN(dsn)
+	return GetDBFromDSN(config.Envs.DBDSN)
 }
 
 func GetDBFromDSN(dsn string) *bun.DB {

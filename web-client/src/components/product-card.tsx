@@ -1,16 +1,19 @@
 import type { components } from "@/api/schema.gen";
 import { formatPrice } from "@/lib/format-price";
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 
 export function ProductCard({
   product,
 }: {
   product: components["schemas"]["Item"];
 }) {
+  const { lang } = useSearch({ from: "__root__" })
+
   return (
     <Link
       to="/product/$slug"
       params={{ slug: product.id }}
+      search={{ lang }}
       className="group flex flex-col"
     >
       <div className="relative aspect-4/5 overflow-hidden rounded-lg bg-secondary">

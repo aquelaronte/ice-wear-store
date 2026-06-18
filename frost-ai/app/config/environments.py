@@ -1,9 +1,10 @@
 from functools import cached_property
 import os
 
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 
-load_dotenv()
+# Walk up the directory tree to find the centralized root .env
+load_dotenv(find_dotenv())
 
 
 class _Envs:
@@ -22,6 +23,10 @@ class _Envs:
     @cached_property
     def openai_apikey(self):
         return os.environ.get("OPENAI_APIKEY")
+
+    @cached_property
+    def port(self) -> int:
+        return int(os.environ.get("FROST_AI_PORT", "8001"))
 
     @property
     def recommendation_collection_name(self):

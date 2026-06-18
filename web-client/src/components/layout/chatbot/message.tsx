@@ -2,7 +2,7 @@ import type { Message } from "@/lib/types/message";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/format-price";
 import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { retrieveItem } from "./hooks/lib/process-message";
 import {
@@ -71,6 +71,7 @@ function retrieveMessageContent(message: Message): ReactNode {
 
 function ItemCard({ itemId }: { itemId: string }) {
   const item = retrieveItem(itemId);
+  const { lang } = useSearch({ from: "__root__" })
 
   if (!item) {
     return (
@@ -131,6 +132,7 @@ function ItemCard({ itemId }: { itemId: string }) {
 
         <Link
           to="/product/$slug"
+          search={{ lang }}
           params={{ slug: item.id }}
           className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-primary transition-colors hover:underline"
         >

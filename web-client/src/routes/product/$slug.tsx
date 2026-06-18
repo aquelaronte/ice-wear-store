@@ -1,7 +1,7 @@
 import { $api } from "@/api/client";
 import { ImageGallery } from "@/components/image-gallery";
 import { formatPrice } from "@/lib/format-price";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
 export const Route = createFileRoute("/product/$slug")({
@@ -17,6 +17,8 @@ function RouteComponent() {
     { params: { path: { id: slug } } },
   );
 
+  const { lang } = useSearch({ from: "__root__" })
+
   if (isPending) {
     return <ProductLoading />;
   }
@@ -31,6 +33,7 @@ function RouteComponent() {
     <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
       <Link
         to="/"
+        search={{ lang }}
         className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ChevronLeft className="size-4" /> Collection
@@ -79,6 +82,8 @@ function ProductLoading() {
 }
 
 function ProductNotFound() {
+  const { lang } = useSearch({ from: "__root__" })
+
   return (
     <main className="mx-auto flex min-h-[60vh] max-w-7xl flex-col items-center justify-center px-5 py-16 text-center sm:px-8">
       <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
@@ -92,6 +97,7 @@ function ProductNotFound() {
       </p>
       <Link
         to="/"
+        search={{ lang }}
         className="mt-8 inline-flex items-center gap-1 text-sm font-medium underline-offset-4 hover:underline"
       >
         <ChevronLeft className="size-4" /> Back to collection

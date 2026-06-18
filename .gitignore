@@ -1,0 +1,3 @@
+# Centralized environment file — never commit real secrets
+.env
+!.env.example

@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -12,38 +13,46 @@ type Config struct {
 	CORSOrigins []string
 	FrostAIURL  string
 	UploadDir   string
-	DB          struct {
-		Host     string
-		Port     string
-		Name     string
-		Password *string
-		User     string
-	}
+	DBDSN       string
 }
 
 var Envs = initConfig()
 
 func initConfig() Config {
-	godotenv.Load()
+	// Load the centralized root .env by walking up from the working directory.
+	if envPath := findEnvFile(); envPath != "" {
+		godotenv.Load(envPath)
+	}
 
 	return Config{
-		Port:        getEnv("PORT", "8000"),
+		Port:        getEnv("MAIN_SERVER_PORT", "8000"),
 		CORSOrigins: splitAndTrim(getEnv("CORS_ORIGINS", "*")),
 		FrostAIURL:  getEnv("FROST_AI_URL", "http://localhost:8001"),
 		UploadDir:   "./uploads",
-		DB: struct {
-			Host     string
-			Port     string
-			Name     string
-			Password *string
-			User     string
-		}{
-			Host:     getEnv("DB_HOST", "127.0.0.1"),
-			Port:     getEnv("DB_PORT", "5432"),
-			Name:     getEnv("DB_NAME", "ice_wear_store"),
-			User:     getEnv("DB_USER", "postgres"),
-			Password: getEnvWithoutFallback("DB_PASSWORD"),
-		},
+		DBDSN:       getEnv("DB_DSN", "postgres://postgres:postgres@127.0.0.1:5432/ice_wear_store?sslmode=disable"),
+	}
+}
+
+// findEnvFile walks up from the current working directory looking for a .env
+// file, returning its path so the centralized root .env is found regardless of
+// which cmd/ binary is run. Returns "" if none is found.
+func findEnvFile() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+
+	for {
+		candidate := filepath.Join(dir, ".env")
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return ""
+		}
+		dir = parent
 	}
 }
 
@@ -64,12 +73,4 @@ func splitAndTrim(value string) []string {
 		}
 	}
 	return out
-}
-
-func getEnvWithoutFallback(key string) *string {
-	if value, ok := os.LookupEnv(key); ok {
-		return &value
-	}
-
-	return nil
 }
