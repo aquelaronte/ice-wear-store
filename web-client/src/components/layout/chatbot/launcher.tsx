@@ -2,10 +2,10 @@ import { Button } from "@/components/ui/button";
 import { PopoverTrigger } from "@/components/ui/popover";
 import { MessageCircleIcon, XIcon } from "lucide-react";
 
-export interface ChatbotLancherProps {
+export interface ChatbotLauncherProps {
   open: boolean;
 }
-export function ChatbotLancher({ open }: ChatbotLancherProps) {
+export function ChatbotLauncher({ open }: ChatbotLauncherProps) {
   return (
     <PopoverTrigger asChild>
       <Button className="fixed bottom-5 right-5 flex items-center justify-center rounded-full size-14">

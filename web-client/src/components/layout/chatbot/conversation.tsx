@@ -3,6 +3,7 @@ import { SendIcon, SnowflakeIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useChatbot } from "./hooks/use-chatbot";
 import { ChatbotWelcome } from "./welcome";
+import { ChatbotMessage } from "./message";
 
 export interface ChatbotConversationProps {
   open: boolean;
@@ -36,23 +37,12 @@ export function ChatbotConversation({ open }: ChatbotConversationProps) {
       >
         {messages.length === 0 && <ChatbotWelcome submit={submit} />}
 
-        {messages.map((message) => {
-          const isUser = message.role === "USER";
+        {messages.map((message, i) => {
           return (
-            <div
-              key={message.createdAt?.getTime()}
-              className={`flex ${isUser ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                  isUser
-                    ? "rounded-br-sm bg-primary text-primary-foreground"
-                    : "rounded-tl-sm bg-secondary text-secondary-foreground"
-                }`}
-              >
-                {message.content}
-              </div>
-            </div>
+            <ChatbotMessage
+              key={message.createdAt?.toISOString() ?? i}
+              message={message}
+            />
           );
         })}
 
